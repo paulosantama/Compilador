@@ -1,4 +1,4 @@
-package Analisador.Sintatico;
+package Analisador.Semantico;
 
 public class AnalisadorSemantico {
 }
