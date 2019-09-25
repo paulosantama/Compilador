@@ -1,5 +1,8 @@
 package Lista;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 public class Lista {
 
     private No inicio;
@@ -36,12 +39,30 @@ public class Lista {
         No aux = inicio;
         for(int i = 0; i < posicao; i++)
         {
-            anterior = prox;
-            aux = prox.getProximo();
+            anterior = aux;
+            aux = aux.getProximo();
         }
         anterior.setProximo(aux.getProximo());
         quantidade--;
         return aux;
+    }
+    public No index(Integer ind)
+    {
+        No aux = inicio;
+        for (int i = 0; i < ind; i++)
+            aux = aux.getProximo();
+        return aux;
+    }
+    public ArrayList<No> tipos(String tipo)
+    {
+        ArrayList<No> arrayList = new ArrayList<>();
+        No aux = inicio;
+        for (int i = 0; i < quantidade; i++) {
+            if (aux.getTipo() == tipo)
+                arrayList.add(aux);
+            aux = aux.getProximo();
+        }
+        return arrayList;
     }
 
 }
