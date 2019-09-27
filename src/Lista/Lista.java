@@ -6,6 +6,7 @@ import java.util.ArrayList;
 public class Lista {
 
     private No inicio;
+    private No fim;
 
     public int getQuantidade() {
         return quantidade;
@@ -23,14 +24,15 @@ public class Lista {
         try
         {
             No no = new No(tipo, nome, linha);
-            if (quantidade == 0)
-            {
+            if (quantidade == 0) {
                 inicio = no;
+                fim = no;
                 quantidade++;
                 return;
             }
+            fim.setProximo(no);
             no.setProximo(inicio);
-            inicio = no;
+            fim = no;
             quantidade++;
         }
         catch (Exception e)
@@ -47,6 +49,7 @@ public class Lista {
             anterior = aux;
             aux = aux.getProximo();
         }
+        assert anterior != null;
         anterior.setProximo(aux.getProximo());
         quantidade--;
         return aux;
@@ -63,7 +66,7 @@ public class Lista {
         ArrayList<No> arrayList = new ArrayList<>();
         No aux = inicio;
         for (int i = 0; i < quantidade; i++) {
-            if (aux.getTipo() == tipo)
+            if (aux.getTipo().equals(tipo))
                 arrayList.add(aux);
             aux = aux.getProximo();
         }
@@ -74,7 +77,7 @@ public class Lista {
         No aux = inicio;
         int ocorrencias = 0;
         for (int i = 0; i < quantidade; i++) {
-            if (aux.getNome() == nome)
+            if (aux.getNome().equals(nome))
                 ocorrencias++;
             aux = aux.getProximo();
         }

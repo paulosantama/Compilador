@@ -1,2 +1,2 @@
-int valor = 0;
-valor = valor + 10;
+10 = 10 + valor15;
+valor15 = valor15 + 70;

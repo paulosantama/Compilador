@@ -1,25 +1,33 @@
 package Analisador.Lexico;
 
-import Common.IntegerStringPair;
 import Common.Config;
-import java.io.*;
+import Common.IntegerStringPair;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import Lista.*;
 
 public class AnalisadorLexico {
 //    private char[] letter = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
+
+    final static String LETTER = "letter";
+    final static String DIGIT = "digit";
+    final static String OPERATOR = "operator";
+    final static String NUMBER = "number";
+    final static String ID = "id";
+    final static String IDENTIFIER = "identifier";
+    final static String SPACE = "space";
+    final static String QUEBRA_DE_LINHA = "quebra";
+
     private ArrayList<String> operator;
     private ArrayList<String> digit;
     private ArrayList<String> letter;
-    public AnalisadorLexico()
-    {
+
+    public AnalisadorLexico() {
         operator = new ArrayList<>();
         digit = new ArrayList<>();
-        letter = new ArrayList<>(Arrays.asList (new String[]{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"}));
+        letter = new ArrayList<>(Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"));
         digit.add("0");
         digit.add("1");
         digit.add("2");
@@ -42,60 +50,124 @@ public class AnalisadorLexico {
 
     }
 
-    public void analisador()
-    {
-        String [] linhas = LeArquivo.lePrograma();
+    public void analisador() {
+        String[] linhas = LeArquivo.lePrograma();
         Lista listaLexemas = new Lista();
         ArrayList<IntegerStringPair> palavras = new ArrayList<>();
         int qualLinha = 0;
-        // nome, tipo, linha
-         for (String linha : linhas)
-         {
-             for (int i = 0; i < linha.length(); i++)
-             {
-                 if (letter.contains(Character.toString(linha.charAt(i))))
-                 {
-                     listaLexemas.push(Character.toString(linha.charAt(i)), "letter", qualLinha);
-//                     System.out.printf("\n######################################\n<letter> = '%s'\n", linha.charAt(i));
-                 }
-                 else if (digit.contains(Character.toString(linha.charAt(i))))
-                 {
-                     listaLexemas.push(Character.toString(linha.charAt(i)), "digit", qualLinha);
-//                     System.out.printf("\n######################################\n<digit> = '%s'\n", linha.charAt(i));
-                 }
-                 else if (operator.contains(Character.toString(linha.charAt(i))))
-                 {
-                     listaLexemas.push(Character.toString(linha.charAt(i)), "operator", qualLinha);
-//                     System.out.printf("\n######################################\n<operator> = '%s'\n", linha.charAt(i));
-                 }
-                 else if (linha.charAt(i) == ' ')
-                     continue;
-//                     System.out.printf("\n######################################\n<space> = '%s'\n", linha.charAt(i));
-                 else
-                 {
-                     System.out.printf("\n######################################\n<invalid> = '%s'\n", linha.charAt(i));
-                 }
-             }
-             qualLinha++;
-         }
 
-         ArrayList<No> arrayList = listaLexemas.listar();
-         for (No elemento : arrayList)
-             System.out.printf("\nNome: %s\nLinha: %d\nTipo: %s\n", elemento.getNome(), elemento.getLinha(), elemento.getTipo());
+//        1ª Etapa
+        for (String linha : linhas) {
+            for (int i = 0; i < linha.length(); i++) {
+                if (letter.contains(Character.toString(linha.charAt(i)))) {
+                    listaLexemas.push(Character.toString(linha.charAt(i)), LETTER, qualLinha);
+                } else if (digit.contains(Character.toString(linha.charAt(i)))) {
+                    listaLexemas.push(Character.toString(linha.charAt(i)), DIGIT, qualLinha);
+                } else if (operator.contains(Character.toString(linha.charAt(i)))) {
+                    listaLexemas.push(Character.toString(linha.charAt(i)), OPERATOR, qualLinha);
+                } else if (linha.charAt(i) == ' ') {
+                    listaLexemas.push(" ", SPACE, qualLinha);
+                }else if (Character.toString(linha.charAt(i)).equals(Config.QUEBRA_LINHA)){
+                    listaLexemas.push(";", QUEBRA_DE_LINHA, qualLinha);
+                }else {
+                    System.out.printf("\n######################################\n<invalid> = '%s'\n", linha.charAt(i));
+                }
+            }
+            qualLinha++;
+        }
+        ArrayList<No> lexemasV1 = listaLexemas.listar();
 
-//        try (BufferedWriter arquivoSaida = new BufferedWriter(new FileWriter(Config.NOME_ARQUIVO_ESCRITA))) {
-//            palavras.forEach((palavra) -> {
-//                try {
-//                    arquivoSaida.append(palavra.getPalavra() + " -> linha " + palavra.getLine() + "\n");
-//                } catch (IOException ex) {
-//                    Logger.getLogger(AnalisadorLexico.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-//            });
-//            arquivoSaida.close();
-//        } catch (IOException ex) {
-//            Logger.getLogger(AnalisadorLexico.class.getName()).log(Level.SEVERE, null, ex);
-//            System.out.println("ERRO: Houve um problema no arquivo de escrita. '"+Config.NOME_ARQUIVO_ESCRITA+"'");
-//        }
-//        System.out.println("O arquivo '"+Config.NOME_ARQUIVO_ESCRITA+"' foi gerado com sucesso!");
+        showProgress(lexemasV1);
+
+//         2ª Etapa
+        ArrayList<No> lexemasV2 = new ArrayList<No>();
+        if (lexemasV1.size() > 0) {
+            lexemasV2.add(lexemasV1.get(0));
+        } else {
+            return;
+        }
+
+        for (No elemento : lexemasV1) {
+            if (elemento == lexemasV1.get(0)) continue;
+
+            No ultimoLexemaV2 = lexemasV2.get(lexemasV2.size() - 1);
+            switch (elemento.getTipo()) {
+                case DIGIT:
+                    switch (ultimoLexemaV2.getTipo()) {
+                        case DIGIT:
+                        case NUMBER:
+                            ultimoLexemaV2.setNome(ultimoLexemaV2.getNome() + elemento.getNome());
+                            ultimoLexemaV2.setTipo(NUMBER);
+                            break;
+                        case LETTER:
+                        case ID:
+                            elemento.setTipo(ID);
+                            lexemasV2.add(elemento);
+                            break;
+                        case OPERATOR:
+                        case SPACE:
+                        case Config.QUEBRA_LINHA:
+                            elemento.setTipo(NUMBER);
+                            lexemasV2.add(elemento);
+                            break;
+                    }
+                    break;
+                case LETTER:
+                    if (ultimoLexemaV2.getTipo().equals(LETTER) || ultimoLexemaV2.getTipo().equals(ID)){
+                        elemento.setTipo(ID);
+                        lexemasV2.add(elemento);
+                    }else{
+                        lexemasV2.add(elemento);
+                    }
+                    break;
+                case OPERATOR:
+                case SPACE:
+                case QUEBRA_DE_LINHA:
+                    lexemasV2.add(elemento);
+                    break;
+            }
+        }
+
+        showProgress(lexemasV2);
+
+//        3ª Etapa
+        ArrayList<No> lexemasV3 = new ArrayList<No>();
+        if (lexemasV2.size() > 0) {
+            lexemasV3.add(lexemasV2.get(0));
+        } else {
+            return;
+        }
+
+        for (No elemento : lexemasV2) {
+            if (elemento == lexemasV3.get(0)) continue;
+
+            No ultimoLexemaV3 = lexemasV3.get(lexemasV3.size() - 1);
+            switch (elemento.getTipo()) {
+                case LETTER:
+                case OPERATOR:
+                case NUMBER:
+                    lexemasV3.add(elemento);
+                    break;
+                case ID:
+                    if (ultimoLexemaV3.getTipo().equals(LETTER) || ultimoLexemaV3.getTipo().equals(ID) || ultimoLexemaV3.getTipo().equals(IDENTIFIER)){
+                        ultimoLexemaV3.setNome(ultimoLexemaV3.getNome() + elemento.getNome());
+                        ultimoLexemaV3.setTipo(IDENTIFIER);
+                    }
+                    break;
+            }
+        }
+        showProgress(lexemasV3);
+    }
+    private void showProgress(ArrayList<No> arr){
+        int linhaAtual = 0;
+        for (No elemento : arr){
+            if (elemento.getLinha() == linhaAtual){
+                System.out.print("<" + elemento.getTipo() + ">");
+            }else{
+                System.out.print("\n<" + elemento.getTipo() + ">");
+                linhaAtual = elemento.getLinha();
+            }
+        }
+        System.out.println("\n");
     }
 }
