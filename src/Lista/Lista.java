@@ -6,6 +6,11 @@ import java.util.ArrayList;
 public class Lista {
 
     private No inicio;
+
+    public int getQuantidade() {
+        return quantidade;
+    }
+
     private int quantidade;
 
     public Lista()
@@ -64,5 +69,25 @@ public class Lista {
         }
         return arrayList;
     }
-
+    public Integer ocorrencia(String nome)
+    {
+        No aux = inicio;
+        int ocorrencias = 0;
+        for (int i = 0; i < quantidade; i++) {
+            if (aux.getNome() == nome)
+                ocorrencias++;
+            aux = aux.getProximo();
+        }
+        return ocorrencias;
+    }
+    public ArrayList<No> listar()
+    {
+        ArrayList<No> arrayList = new ArrayList<>();
+        No aux = inicio;
+        for (int i = 0; i < quantidade; i++) {
+            arrayList.add(aux);
+            aux = aux.getProximo();
+        }
+        return arrayList;
+    }
 }
