@@ -9,8 +9,6 @@ import java.util.Arrays;
 import Lista.*;
 
 public class AnalisadorLexico {
-//    private char[] letter = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
-
     final static String LETTER = "letter";
     final static String DIGIT = "digit";
     final static String OPERATOR = "operator";
@@ -25,6 +23,7 @@ public class AnalisadorLexico {
     private ArrayList<String> letter;
 
     public AnalisadorLexico() {
+
         operator = new ArrayList<>();
         digit = new ArrayList<>();
         letter = new ArrayList<>(Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"));
@@ -52,10 +51,9 @@ public class AnalisadorLexico {
 
     public void analisador() {
         String[] linhas = LeArquivo.lePrograma();
-        Lista listaLexemas = new Lista();
         ArrayList<IntegerStringPair> palavras = new ArrayList<>();
         int qualLinha = 0;
-
+        Lista listaLexemas = new Lista();
 //        1ª Etapa
         for (String linha : linhas) {
             for (int i = 0; i < linha.length(); i++) {
@@ -76,8 +74,6 @@ public class AnalisadorLexico {
             qualLinha++;
         }
         ArrayList<No> lexemasV1 = listaLexemas.listar();
-
-        showProgress(lexemasV1);
 
 //         2ª Etapa
         ArrayList<No> lexemasV2 = new ArrayList<No>();
@@ -128,7 +124,6 @@ public class AnalisadorLexico {
             }
         }
 
-        showProgress(lexemasV2);
 
 //        3ª Etapa
         ArrayList<No> lexemasV3 = new ArrayList<No>();
@@ -156,18 +151,27 @@ public class AnalisadorLexico {
                     break;
             }
         }
-        showProgress(lexemasV3);
+        Lista lexemasFinal = new Lista();
+        lexemasFinal.converter(lexemasV3);
+        showProgress(lexemasFinal);
     }
-    private void showProgress(ArrayList<No> arr){
-        int linhaAtual = 0;
-        for (No elemento : arr){
-            if (elemento.getLinha() == linhaAtual){
-                System.out.print("<" + elemento.getTipo() + ">");
-            }else{
-                System.out.print("\n<" + elemento.getTipo() + ">");
-                linhaAtual = elemento.getLinha();
-            }
+
+    private void showProgress(Lista arr){
+        String string = "";
+        ArrayList<String> tokens = new ArrayList<>();
+
+        for (int i = 0; i < arr.getQuantidade(); i++){
+            string += String.format("Nome: '%s' - Tipo: '%s' - Linha: '%d'%n", arr.index(i).getNome(), arr.index(i).getTipo(), arr.index(i).getLinha());
+            if (!tokens.contains(arr.index(i).getNome()))
+                tokens.add(arr.index(i).getNome());
         }
-        System.out.println("\n");
+
+        string += "\n";
+
+        for (String token : tokens)
+            string += String.format("Token: '%s' - Ocorrencia: '%s'%n", token, arr.ocorrencia(token));
+
+        System.out.println(string);
+        SalvaArquivo.salva(string);
     }
 }

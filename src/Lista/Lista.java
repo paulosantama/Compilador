@@ -83,6 +83,19 @@ public class Lista {
         }
         return ocorrencias;
     }
+    public Integer quantidadeToken(String token)
+    {
+        No aux = inicio;
+        int quantidadeTokens = 0;
+        for(int i = 0; i < quantidade; i++)
+        {
+            if (aux.getNome() == token)
+                quantidadeTokens++;
+            aux = aux.getProximo();
+        }
+        return quantidadeTokens;
+    }
+
     public ArrayList<No> listar()
     {
         ArrayList<No> arrayList = new ArrayList<>();
@@ -93,4 +106,12 @@ public class Lista {
         }
         return arrayList;
     }
+
+    public  void  converter(ArrayList<No> lista) {
+        for (int i = 0; i < lista.size(); i++)
+            push(lista.get(i).getNome(), lista.get(i).getTipo(), lista.get(i).getLinha());
+    }
+
+
+
 }
