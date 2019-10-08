@@ -1,2 +1,2 @@
-int valor;
-valor = valor + 70;
+c2 = c2 + 1;
+2c = 2c + 1;

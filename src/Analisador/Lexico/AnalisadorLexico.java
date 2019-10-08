@@ -74,6 +74,7 @@ public class AnalisadorLexico {
             qualLinha++;
         }
         ArrayList<No> lexemasV1 = listaLexemas.listar();
+//        testeProgress(lexemasV1);
 
 //         2ª Etapa
         ArrayList<No> lexemasV2 = new ArrayList<No>();
@@ -102,7 +103,7 @@ public class AnalisadorLexico {
                             break;
                         case OPERATOR:
                         case SPACE:
-                        case Config.QUEBRA_LINHA:
+                        case QUEBRA_DE_LINHA:
                             elemento.setTipo(NUMBER);
                             lexemasV2.add(elemento);
                             break;
@@ -123,8 +124,7 @@ public class AnalisadorLexico {
                     break;
             }
         }
-
-
+//        testeProgress(lexemasV2);
 //        3ª Etapa
         ArrayList<No> lexemasV3 = new ArrayList<No>();
         if (lexemasV2.size() > 0) {
@@ -154,6 +154,7 @@ public class AnalisadorLexico {
         Lista lexemasFinal = new Lista();
         lexemasFinal.converter(lexemasV3);
         showProgress(lexemasFinal);
+//        testeProgress(lexemasV3);
     }
 
     private void showProgress(Lista arr){
@@ -173,5 +174,17 @@ public class AnalisadorLexico {
 
         System.out.println(string);
         SalvaArquivo.salva(string);
+    }
+    private void testeProgress(ArrayList<No> arr){
+        int linhaAtual = 0;
+        for (No elemento : arr){
+            if (elemento.getLinha() == linhaAtual){
+                System.out.print("<" + elemento.getTipo() + ">");
+            }else{
+                System.out.print("\n<" + elemento.getTipo() + ">");
+                linhaAtual = elemento.getLinha();
+            }
+        }
+        System.out.println("\n");
     }
 }
