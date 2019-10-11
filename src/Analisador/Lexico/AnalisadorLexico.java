@@ -1,10 +1,12 @@
 package Analisador.Lexico;
 
 import Common.Config;
+import Common.Erro;
 import Common.IntegerStringPair;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 
 import Lista.*;
 
@@ -21,6 +23,8 @@ public class AnalisadorLexico {
     private ArrayList<String> operator;
     private ArrayList<String> digit;
     private ArrayList<String> letter;
+
+    private ArrayList<Erro> sintaxErrors;
 
     public AnalisadorLexico() {
 
@@ -47,6 +51,8 @@ public class AnalisadorLexico {
         operator.add("<=");
         operator.add(">=");
 
+        sintaxErrors = new ArrayList<>();
+
     }
 
     public void analisador() {
@@ -54,6 +60,7 @@ public class AnalisadorLexico {
         ArrayList<IntegerStringPair> palavras = new ArrayList<>();
         int qualLinha = 0;
         Lista listaLexemas = new Lista();
+
 //        1ª Etapa
         for (String linha : linhas) {
             for (int i = 0; i < linha.length(); i++) {
@@ -74,7 +81,7 @@ public class AnalisadorLexico {
             qualLinha++;
         }
         ArrayList<No> lexemasV1 = listaLexemas.listar();
-//        testeProgress(lexemasV1);
+        testeProgress(lexemasV1);
 
 //         2ª Etapa
         ArrayList<No> lexemasV2 = new ArrayList<No>();
@@ -124,7 +131,7 @@ public class AnalisadorLexico {
                     break;
             }
         }
-//        testeProgress(lexemasV2);
+        testeProgress(lexemasV2);
 //        3ª Etapa
         ArrayList<No> lexemasV3 = new ArrayList<No>();
         if (lexemasV2.size() > 0) {
@@ -151,10 +158,40 @@ public class AnalisadorLexico {
                     break;
             }
         }
+        testeProgress(lexemasV3);
+
+//        4ª Etapa
+        ArrayList<No> lexemasV4 = new ArrayList<No>();
+        if (lexemasV3.size() > 0) {
+            lexemasV4.add(lexemasV3.get(0));
+        } else {
+            return;
+        }
+
+        for (No elemento : lexemasV3) {
+            if (elemento == lexemasV4.get(0)) continue;
+
+            No ultimoLexemaV4 = lexemasV4.get(lexemasV4.size() - 1);
+            switch (elemento.getTipo()) {
+                case IDENTIFIER:
+                    switch (ultimoLexemaV4.getTipo()){
+                        case NUMBER:
+                            sintaxErrors.add(new Erro(elemento.getLinha()+1,"Erro de Sintaxe - Identificador começando com numero", ultimoLexemaV4.getNome()+elemento.getNome()));
+                            break;
+                        default:
+                            lexemasV4.add(elemento);
+                            break;
+                    }
+                case OPERATOR:
+                case NUMBER:
+                    lexemasV4.add(elemento);
+                    break;
+            }
+        }
+        testeProgress(lexemasV4);
         Lista lexemasFinal = new Lista();
-        lexemasFinal.converter(lexemasV3);
+        lexemasFinal.converter(lexemasV4);
         showProgress(lexemasFinal);
-//        testeProgress(lexemasV3);
     }
 
     private void showProgress(Lista arr){
@@ -171,6 +208,10 @@ public class AnalisadorLexico {
 
         for (String token : tokens)
             string += String.format("Token: '%s' - Ocorrencia: '%s'%n", token, arr.ocorrencia(token));
+
+        string += "\n\nErros\n";
+        for (Erro erro : sintaxErrors)
+            string += String.format("Linha: %s . Mensagem: %s . Alvo: %s .%n",erro.getLinha(), erro.getMensagem(), erro.getAlvo() );
 
         System.out.println(string);
         SalvaArquivo.salva(string);

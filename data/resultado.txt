@@ -1,19 +1,25 @@
 Nome: 'c2' - Tipo: 'identifier' - Linha: '0'
 Nome: '=' - Tipo: 'operator' - Linha: '0'
 Nome: 'c2' - Tipo: 'identifier' - Linha: '0'
+Nome: 'c2' - Tipo: 'identifier' - Linha: '0'
 Nome: '+' - Tipo: 'operator' - Linha: '0'
 Nome: '1' - Tipo: 'number' - Linha: '0'
 Nome: '2' - Tipo: 'number' - Linha: '1'
-Nome: 'c' - Tipo: 'letter' - Linha: '1'
+Nome: 'casa' - Tipo: 'identifier' - Linha: '1'
 Nome: '=' - Tipo: 'operator' - Linha: '1'
 Nome: '2' - Tipo: 'number' - Linha: '1'
-Nome: 'c' - Tipo: 'letter' - Linha: '1'
+Nome: 'casa' - Tipo: 'identifier' - Linha: '1'
 Nome: '+' - Tipo: 'operator' - Linha: '1'
 Nome: '1' - Tipo: 'number' - Linha: '1'
 
-Token: 'c2' - Ocorrencia: '2'
+Token: 'c2' - Ocorrencia: '3'
 Token: '=' - Ocorrencia: '2'
 Token: '+' - Ocorrencia: '2'
 Token: '1' - Ocorrencia: '2'
 Token: '2' - Ocorrencia: '2'
-Token: 'c' - Ocorrencia: '2'
+Token: 'casa' - Ocorrencia: '2'
+
+
+Erros
+Linha: 2 . Mensagem: Erro de Sintaxe - Identificador começando com numero . Alvo: 2casa .
+Linha: 2 . Mensagem: Erro de Sintaxe - Identificador começando com numero . Alvo: 2casa .
